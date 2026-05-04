@@ -1,0 +1,799 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>НОВОСТРОЙКИ ЛНР — Ипотека 2%</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@300;400;600;700;900&family=Manrope:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --gold: #C8A96E;
+    --gold-light: #E8C98E;
+    --dark: #0A0A0F;
+    --dark2: #12121A;
+    --dark3: #1A1A26;
+    --accent: #2A6AFF;
+    --accent2: #1AFFB2;
+    --text: #E8E8F0;
+    --muted: #7A7A9A;
+    --border: rgba(200,169,110,0.2);
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html { scroll-behavior:smooth; }
+  body { background:var(--dark); color:var(--text); font-family:'Manrope',sans-serif; overflow-x:hidden; }
+  body::before {
+    content:''; position:fixed; inset:0; pointer-events:none; z-index:1000;
+    background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+    opacity:.4;
+  }
+
+  /* NAV */
+  nav {
+    position:fixed; top:0; left:0; right:0; z-index:100;
+    display:flex; align-items:center; justify-content:space-between;
+    padding:20px 48px;
+    background:rgba(10,10,15,0.88); backdrop-filter:blur(20px);
+    border-bottom:1px solid var(--border);
+  }
+  .logo { font-family:'Unbounded',sans-serif; font-weight:900; font-size:18px; color:var(--gold); }
+  .logo span { color:var(--text); }
+  .nav-links { display:flex; gap:32px; list-style:none; }
+  .nav-links a { color:var(--muted); text-decoration:none; font-size:13px; font-weight:500; letter-spacing:.5px; text-transform:uppercase; transition:color .2s; }
+  .nav-links a:hover { color:var(--gold); }
+  .nav-cta { background:var(--gold); color:var(--dark); padding:10px 24px; border-radius:100px; font-size:13px; font-weight:700; text-decoration:none; font-family:'Unbounded',sans-serif; transition:all .2s; }
+  .nav-cta:hover { background:var(--gold-light); transform:translateY(-1px); }
+
+  /* HERO */
+  .hero { min-height:100vh; display:flex; align-items:center; position:relative; overflow:hidden; padding:120px 48px 80px; }
+  .hero-bg {
+    position:absolute; inset:0;
+    background: radial-gradient(ellipse 80% 60% at 65% 50%, rgba(42,106,255,.12) 0%, transparent 60%),
+                radial-gradient(ellipse 50% 80% at 20% 80%, rgba(200,169,110,.08) 0%, transparent 50%),
+                linear-gradient(180deg, var(--dark) 0%, var(--dark2) 100%);
+  }
+  .hero-grid {
+    position:absolute; inset:0;
+    background-image:linear-gradient(rgba(200,169,110,.04) 1px, transparent 1px), linear-gradient(90deg,rgba(200,169,110,.04) 1px,transparent 1px);
+    background-size:80px 80px;
+    mask-image:radial-gradient(ellipse 70% 70% at 65% 40%, black 0%, transparent 70%);
+  }
+  .hero-content { position:relative; z-index:2; max-width:680px; }
+  .hero-badge {
+    display:inline-flex; align-items:center; gap:8px;
+    background:rgba(200,169,110,.12); border:1px solid rgba(200,169,110,.3);
+    padding:6px 16px; border-radius:100px; font-size:12px; font-weight:600;
+    color:var(--gold); text-transform:uppercase; letter-spacing:1px; margin-bottom:32px;
+    animation:fadeInDown .6s ease both;
+  }
+  .hero-badge::before { content:''; width:6px; height:6px; background:var(--gold); border-radius:50%; animation:pulse 2s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.5;transform:scale(1.3)} }
+  h1 { font-family:'Unbounded',sans-serif; font-size:clamp(36px,5.5vw,72px); font-weight:900; line-height:1.05; letter-spacing:-2px; margin-bottom:24px; animation:fadeInUp .7s ease .1s both; }
+  h1 .line-gold { color:var(--gold); display:block; }
+  h1 .line-accent { color:var(--accent2); }
+  .hero-sub { font-size:18px; line-height:1.6; color:var(--muted); margin-bottom:48px; max-width:520px; animation:fadeInUp .7s ease .2s both; }
+  .hero-cta-group { display:flex; gap:16px; align-items:center; flex-wrap:wrap; animation:fadeInUp .7s ease .3s both; }
+  .hero-visual { position:absolute; right:0; top:0; bottom:0; width:48%; overflow:hidden; z-index:1; }
+  .hero-visual::before { content:''; position:absolute; inset:0; background:linear-gradient(90deg,var(--dark) 0%,transparent 45%); z-index:2; }
+  #hero-img { width:100%; height:100%; object-fit:cover; opacity:0; transition:opacity 1.2s; }
+  #hero-img.loaded { opacity:1; }
+  .hero-img-skeleton { position:absolute; inset:0; background:linear-gradient(110deg, var(--dark2) 30%, var(--dark3) 50%, var(--dark2) 70%); background-size:200% 100%; animation:shimmer 1.8s infinite; }
+  @keyframes shimmer { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
+
+  /* BTNS */
+  .btn-primary { display:inline-flex; align-items:center; gap:10px; background:linear-gradient(135deg,var(--gold),var(--gold-light)); color:var(--dark); padding:16px 32px; border-radius:100px; font-family:'Unbounded',sans-serif; font-size:14px; font-weight:700; text-decoration:none; transition:all .3s; cursor:pointer; border:none; box-shadow:0 8px 32px rgba(200,169,110,.3); }
+  .btn-primary:hover { transform:translateY(-2px); box-shadow:0 16px 48px rgba(200,169,110,.4); }
+  .btn-ghost { display:inline-flex; align-items:center; gap:10px; color:var(--text); font-size:14px; font-weight:500; text-decoration:none; padding:16px 24px; border:1px solid var(--border); border-radius:100px; transition:all .2s; cursor:pointer; background:transparent; }
+  .btn-ghost:hover { border-color:var(--gold); color:var(--gold); }
+
+  /* STATS */
+  .stats-bar { padding:0 48px; }
+  .stats-inner { background:var(--dark3); border:1px solid var(--border); border-radius:24px; display:grid; grid-template-columns:repeat(4,1fr); overflow:hidden; }
+  .stat-item { padding:32px; text-align:center; position:relative; transition:background .3s; }
+  .stat-item:hover { background:rgba(200,169,110,.05); }
+  .stat-item:not(:last-child)::after { content:''; position:absolute; right:0; top:20%; bottom:20%; width:1px; background:var(--border); }
+  .stat-num { font-family:'Unbounded',sans-serif; font-size:36px; font-weight:900; color:var(--gold); line-height:1; margin-bottom:8px; }
+  .stat-num span { color:var(--gold-light); font-size:22px; }
+  .stat-label { font-size:13px; color:var(--muted); font-weight:500; line-height:1.4; }
+
+  /* SECTIONS */
+  section { padding:100px 48px; }
+  .section-tag { display:inline-flex; align-items:center; gap:8px; font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:2px; color:var(--gold); margin-bottom:16px; }
+  .section-tag::before { content:''; width:24px; height:1px; background:var(--gold); }
+  h2 { font-family:'Unbounded',sans-serif; font-size:clamp(28px,3.5vw,48px); font-weight:800; letter-spacing:-1.5px; line-height:1.1; margin-bottom:16px; }
+  .section-desc { font-size:17px; color:var(--muted); line-height:1.7; max-width:560px; margin-bottom:60px; }
+
+  /* MORTGAGE */
+  .mortgage-section { background:var(--dark2); position:relative; overflow:hidden; }
+  .mortgage-section::before { content:''; position:absolute; top:-200px; right:-200px; width:600px; height:600px; background:radial-gradient(circle,rgba(42,106,255,.1) 0%,transparent 70%); pointer-events:none; }
+  .mortgage-grid { display:grid; grid-template-columns:1fr 1fr; gap:80px; align-items:center; }
+  .rate-display { text-align:center; padding:60px; background:linear-gradient(135deg,rgba(200,169,110,.08),rgba(200,169,110,.03)); border:1px solid var(--border); border-radius:32px; position:relative; overflow:hidden; }
+  .rate-num { font-family:'Unbounded',sans-serif; font-size:120px; font-weight:900; color:var(--gold); line-height:1; letter-spacing:-6px; display:block; }
+  .rate-pct { font-size:48px; color:var(--gold-light); }
+  .rate-label { font-size:16px; color:var(--muted); margin-top:8px; }
+  .mortgage-features { display:flex; flex-direction:column; gap:24px; }
+  .feat-row { display:flex; align-items:flex-start; gap:20px; padding:24px; background:rgba(255,255,255,.02); border:1px solid rgba(255,255,255,.06); border-radius:16px; transition:all .3s; }
+  .feat-row:hover { background:rgba(200,169,110,.05); border-color:var(--border); transform:translateX(4px); }
+  .feat-icon { width:44px; height:44px; background:linear-gradient(135deg,rgba(200,169,110,.2),rgba(200,169,110,.05)); border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:20px; flex-shrink:0; }
+  .feat-title { font-family:'Unbounded',sans-serif; font-size:15px; font-weight:700; margin-bottom:4px; }
+  .feat-desc { font-size:14px; color:var(--muted); line-height:1.5; }
+
+  /* AI GENERATOR */
+  .ai-section { background:var(--dark); }
+  .ai-generator { background:var(--dark3); border:1px solid var(--border); border-radius:32px; overflow:hidden; }
+  .ai-header { padding:32px 40px; border-bottom:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:16px; }
+  .ai-title-block h3 { font-family:'Unbounded',sans-serif; font-size:20px; font-weight:800; margin-bottom:4px; }
+  .ai-title-block p { font-size:14px; color:var(--muted); }
+  .ai-badge { display:flex; align-items:center; gap:8px; background:rgba(26,255,178,.1); border:1px solid rgba(26,255,178,.3); padding:8px 16px; border-radius:100px; font-size:12px; font-weight:600; color:var(--accent2); }
+  .ai-body { padding:40px; display:grid; grid-template-columns:1fr 1fr; gap:40px; }
+  .ai-controls { display:flex; flex-direction:column; gap:20px; }
+  .control-group label { display:block; font-size:12px; font-weight:600; color:var(--muted); text-transform:uppercase; letter-spacing:1px; margin-bottom:10px; }
+  .style-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+  .style-btn { padding:12px 16px; background:rgba(255,255,255,.03); border:1px solid rgba(255,255,255,.08); border-radius:12px; color:var(--muted); font-size:13px; font-weight:500; cursor:pointer; transition:all .2s; text-align:left; font-family:inherit; }
+  .style-btn:hover, .style-btn.active { background:rgba(200,169,110,.1); border-color:var(--border); color:var(--gold); }
+  .prompt-input { width:100%; background:rgba(255,255,255,.03); border:1px solid rgba(255,255,255,.08); border-radius:16px; padding:16px; color:var(--text); font-family:'Manrope',sans-serif; font-size:14px; resize:none; height:100px; transition:border-color .2s; }
+  .prompt-input:focus { outline:none; border-color:var(--border); }
+  .prompt-input::placeholder { color:var(--muted); }
+  .generate-btn { width:100%; padding:16px; background:linear-gradient(135deg,var(--gold),var(--gold-light)); border:none; border-radius:16px; font-family:'Unbounded',sans-serif; font-size:14px; font-weight:700; color:var(--dark); cursor:pointer; transition:all .3s; display:flex; align-items:center; justify-content:center; gap:10px; }
+  .generate-btn:hover:not(:disabled) { transform:translateY(-2px); box-shadow:0 12px 32px rgba(200,169,110,.3); }
+  .generate-btn:disabled { opacity:.6; cursor:not-allowed; }
+  .ai-preview { border-radius:20px; overflow:hidden; background:var(--dark2); min-height:360px; position:relative; display:flex; align-items:center; justify-content:center; }
+  .ai-preview img { width:100%; height:100%; object-fit:cover; position:absolute; inset:0; border-radius:20px; opacity:0; transition:opacity .8s; }
+  .ai-preview img.loaded { opacity:1; }
+  .ai-preview-placeholder { display:flex; flex-direction:column; align-items:center; gap:12px; color:var(--muted); font-size:14px; text-align:center; padding:40px; }
+  .ai-preview-placeholder .icon { font-size:48px; opacity:.3; }
+  .ai-loader { position:absolute; inset:0; background:rgba(10,10,15,.85); display:none; align-items:center; justify-content:center; flex-direction:column; gap:16px; border-radius:20px; }
+  .ai-loader.active { display:flex; }
+  .loader-ring { width:48px; height:48px; border:2px solid rgba(200,169,110,.2); border-top-color:var(--gold); border-radius:50%; animation:spin .8s linear infinite; }
+  @keyframes spin { to { transform:rotate(360deg); } }
+  .loader-text { font-size:13px; color:var(--muted); }
+  .ai-error { position:absolute; bottom:16px; left:16px; right:16px; background:rgba(255,80,80,.15); border:1px solid rgba(255,80,80,.3); border-radius:12px; padding:12px 16px; font-size:13px; color:#ff8080; display:none; }
+  .ai-error.show { display:block; }
+
+  /* PROPERTIES */
+  .props-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:24px; }
+  .prop-card { background:var(--dark2); border:1px solid rgba(255,255,255,.06); border-radius:24px; overflow:hidden; transition:all .4s; cursor:pointer; }
+  .prop-card:hover { transform:translateY(-8px); border-color:var(--border); box-shadow:0 32px 80px rgba(0,0,0,.4); }
+  .prop-img { height:220px; background:var(--dark3); position:relative; overflow:hidden; display:flex; align-items:center; justify-content:center; }
+  .prop-img .emoji-bg { font-size:64px; opacity:.15; transition:transform .4s; }
+  .prop-card:hover .emoji-bg { transform:scale(1.1); }
+  .prop-img img { width:100%; height:100%; object-fit:cover; opacity:0; transition:opacity .8s; position:absolute; inset:0; }
+  .prop-img img.loaded { opacity:1; }
+  .prop-badge { position:absolute; top:16px; left:16px; background:rgba(10,10,15,.85); backdrop-filter:blur(8px); border:1px solid var(--border); padding:4px 12px; border-radius:100px; font-size:11px; font-weight:700; color:var(--gold); text-transform:uppercase; }
+  .prop-badge.new { color:var(--accent2); border-color:rgba(26,255,178,.3); background:rgba(26,255,178,.1); }
+  .prop-info { padding:24px; }
+  .prop-name { font-family:'Unbounded',sans-serif; font-size:16px; font-weight:700; margin-bottom:6px; letter-spacing:-.5px; }
+  .prop-location { font-size:13px; color:var(--muted); margin-bottom:20px; }
+  .prop-specs { display:flex; gap:16px; margin-bottom:20px; }
+  .spec { font-size:13px; color:var(--muted); }
+  .spec strong { color:var(--text); }
+  .prop-price { display:flex; align-items:baseline; justify-content:space-between; }
+  .price-val { font-family:'Unbounded',sans-serif; font-size:20px; font-weight:900; color:var(--gold); }
+  .price-mo { font-size:13px; color:var(--accent2); font-weight:600; }
+
+  /* CALCULATOR */
+  .calc-section { background:var(--dark2); }
+  .calc-wrapper { max-width:800px; margin:0 auto; background:var(--dark3); border:1px solid var(--border); border-radius:32px; padding:48px; }
+  .calc-title { font-family:'Unbounded',sans-serif; font-size:28px; font-weight:800; margin-bottom:40px; text-align:center; letter-spacing:-1px; }
+  .range-group { margin-bottom:32px; }
+  .range-label { display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; }
+  .range-label span:first-child { font-size:14px; color:var(--muted); }
+  .range-value { font-family:'Unbounded',sans-serif; font-size:16px; font-weight:700; color:var(--gold); }
+  input[type=range] { width:100%; height:4px; appearance:none; background:linear-gradient(to right,var(--gold) 0%,rgba(200,169,110,.2) 0%); border-radius:100px; outline:none; cursor:pointer; }
+  input[type=range]::-webkit-slider-thumb { appearance:none; width:20px; height:20px; background:var(--gold); border-radius:50%; box-shadow:0 0 0 4px rgba(200,169,110,.2); cursor:pointer; }
+  .calc-result { background:linear-gradient(135deg,rgba(200,169,110,.1),rgba(42,106,255,.05)); border:1px solid var(--border); border-radius:20px; padding:32px; text-align:center; margin-top:40px; }
+  .result-payment { font-family:'Unbounded',sans-serif; font-size:48px; font-weight:900; color:var(--gold); letter-spacing:-2px; margin-bottom:8px; }
+  .result-label { font-size:14px; color:var(--muted); margin-bottom:24px; }
+  .result-details { display:flex; justify-content:center; gap:40px; flex-wrap:wrap; }
+  .res-detail { text-align:center; }
+  .res-detail .val { font-family:'Unbounded',sans-serif; font-size:18px; font-weight:700; }
+  .res-detail .lbl { font-size:12px; color:var(--muted); margin-top:4px; }
+
+  /* AI CHAT */
+  .chat-section { background:var(--dark); }
+  .chat-wrapper { max-width:720px; margin:0 auto; }
+  .chat-box { background:var(--dark3); border:1px solid var(--border); border-radius:24px; overflow:hidden; }
+  .chat-messages { height:360px; overflow-y:auto; padding:24px; display:flex; flex-direction:column; gap:12px; scroll-behavior:smooth; }
+  .chat-messages::-webkit-scrollbar { width:4px; }
+  .chat-messages::-webkit-scrollbar-track { background:transparent; }
+  .chat-messages::-webkit-scrollbar-thumb { background:var(--border); border-radius:100px; }
+  .msg { max-width:80%; padding:14px 18px; border-radius:18px; font-size:14px; line-height:1.6; }
+  .msg.bot { background:rgba(255,255,255,.05); border:1px solid rgba(255,255,255,.08); align-self:flex-start; border-bottom-left-radius:4px; }
+  .msg.user { background:linear-gradient(135deg,var(--gold),var(--gold-light)); color:var(--dark); align-self:flex-end; border-bottom-right-radius:4px; font-weight:600; }
+  .msg.typing { opacity:.6; }
+  .chat-input-row { display:flex; gap:12px; padding:20px 24px; border-top:1px solid var(--border); background:var(--dark2); }
+  .chat-input { flex:1; background:rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.08); border-radius:100px; padding:14px 20px; color:var(--text); font-family:'Manrope',sans-serif; font-size:14px; transition:border-color .2s; }
+  .chat-input:focus { outline:none; border-color:var(--border); }
+  .chat-input::placeholder { color:var(--muted); }
+  .chat-send { background:var(--gold); border:none; border-radius:100px; padding:14px 24px; color:var(--dark); font-family:'Unbounded',sans-serif; font-size:13px; font-weight:700; cursor:pointer; transition:all .2s; white-space:nowrap; }
+  .chat-send:hover { background:var(--gold-light); }
+
+  /* FORM */
+  .contact-section { background:var(--dark2); }
+  .contact-grid { display:grid; grid-template-columns:1fr 1fr; gap:80px; align-items:start; }
+  .contact-card { background:var(--dark3); border:1px solid var(--border); border-radius:24px; padding:40px; }
+  .form-row { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+  .form-group { margin-bottom:16px; }
+  .form-group label { display:block; font-size:12px; font-weight:600; color:var(--muted); text-transform:uppercase; letter-spacing:1px; margin-bottom:8px; }
+  .form-input { width:100%; background:rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.08); border-radius:12px; padding:14px 16px; color:var(--text); font-family:'Manrope',sans-serif; font-size:15px; transition:border-color .2s; }
+  .form-input:focus { outline:none; border-color:var(--border); }
+  .form-input::placeholder { color:var(--muted); }
+  select.form-input { appearance:none; cursor:pointer; }
+  select.form-input option { background:var(--dark3); }
+  .submit-btn { width:100%; padding:18px; background:linear-gradient(135deg,var(--gold),var(--gold-light)); border:none; border-radius:16px; font-family:'Unbounded',sans-serif; font-size:15px; font-weight:700; color:var(--dark); cursor:pointer; transition:all .3s; margin-top:8px; }
+  .submit-btn:hover { transform:translateY(-2px); box-shadow:0 16px 48px rgba(200,169,110,.3); }
+  .submit-btn:disabled { opacity:.6; cursor:not-allowed; transform:none; }
+  .form-note { font-size:12px; color:var(--muted); text-align:center; margin-top:16px; line-height:1.5; }
+  .form-success { display:none; text-align:center; padding:40px 20px; }
+  .form-success.show { display:block; }
+  .success-icon { font-size:56px; margin-bottom:16px; }
+  .success-title { font-family:'Unbounded',sans-serif; font-size:22px; font-weight:800; margin-bottom:8px; color:var(--gold); }
+  .success-desc { color:var(--muted); font-size:15px; line-height:1.6; }
+  .contact-info { display:flex; flex-direction:column; gap:16px; margin-top:32px; }
+  .info-row { display:flex; align-items:center; gap:12px; font-size:14px; color:var(--muted); }
+
+  /* FOOTER */
+  footer { border-top:1px solid var(--border); padding:40px 48px; display:flex; align-items:center; justify-content:space-between; background:var(--dark2); }
+  .footer-logo { font-family:'Unbounded',sans-serif; font-weight:900; font-size:16px; color:var(--gold); }
+  .footer-copy { font-size:13px; color:var(--muted); }
+
+  /* FLOAT CTA */
+  .float-cta { position:fixed; bottom:32px; right:32px; z-index:200; background:linear-gradient(135deg,var(--gold),var(--gold-light)); color:var(--dark); padding:16px 28px; border-radius:100px; font-family:'Unbounded',sans-serif; font-size:13px; font-weight:700; box-shadow:0 8px 40px rgba(200,169,110,.4); transition:all .3s; display:flex; align-items:center; gap:8px; cursor:pointer; border:none; animation:floatBounce 3s ease-in-out infinite; }
+  .float-cta:hover { box-shadow:0 16px 60px rgba(200,169,110,.5); animation:none; transform:scale(1.05) translateY(-2px); }
+  @keyframes floatBounce { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-6px)} }
+
+  /* ANIMATIONS */
+  @keyframes fadeInUp { from{opacity:0;transform:translateY(30px)} to{opacity:1;transform:none} }
+  @keyframes fadeInDown { from{opacity:0;transform:translateY(-20px)} to{opacity:1;transform:none} }
+  .reveal { opacity:0; transform:translateY(40px); transition:opacity .7s ease, transform .7s ease; }
+  .reveal.visible { opacity:1; transform:none; }
+
+  /* RESPONSIVE */
+  @media(max-width:1024px){
+    nav{padding:16px 24px;}
+    .nav-links{display:none;}
+    .hero{padding:100px 24px 60px;}
+    .hero-visual{display:none;}
+    .stats-bar{padding:0 24px;}
+    .stats-inner{grid-template-columns:1fr 1fr;}
+    section{padding:60px 24px;}
+    .mortgage-grid,.contact-grid{grid-template-columns:1fr;gap:40px;}
+    .props-grid{grid-template-columns:1fr 1fr;}
+    .ai-body{grid-template-columns:1fr;}
+    footer{flex-direction:column;gap:12px;text-align:center;padding:32px 24px;}
+  }
+  @media(max-width:640px){
+    .stats-inner{grid-template-columns:1fr 1fr;}
+    .stat-num{font-size:28px;}
+    .props-grid{grid-template-columns:1fr;}
+    .form-row{grid-template-columns:1fr;}
+    .style-grid{grid-template-columns:1fr;}
+    .float-cta{bottom:20px;right:20px;padding:13px 20px;font-size:12px;}
+    .result-details{gap:24px;}
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="logo">ЛНР<span>Новострой</span></div>
+  <ul class="nav-links">
+    <li><a href="#mortgage">Ипотека 2%</a></li>
+    <li><a href="#properties">Квартиры</a></li>
+    <li><a href="#calculator">Калькулятор</a></li>
+    <li><a href="#ai-gen">AI Визуализатор</a></li>
+    <li><a href="#contact">Заявка</a></li>
+  </ul>
+  <a href="#contact" class="nav-cta">Консультация бесплатно</a>
+</nav>
+
+<!-- HERO -->
+<section class="hero" id="home">
+  <div class="hero-bg"></div>
+  <div class="hero-grid"></div>
+  <div class="hero-visual">
+    <div class="hero-img-skeleton" id="hero-skeleton"></div>
+    <img id="hero-img" alt="Новостройка ЛНР" />
+  </div>
+  <div class="hero-content">
+    <div class="hero-badge">🏗 Официальные новостройки ЛНР</div>
+    <h1>
+      Твоя квартира
+      <span class="line-gold">в новостройке</span>
+      под <span class="line-accent">2%</span> годовых
+    </h1>
+    <p class="hero-sub">Государственная программа льготной ипотеки для жителей ЛНР. Квартиры от застройщика без посредников. Первый взнос от 10%. Одобрение за 3 дня.</p>
+    <div class="hero-cta-group">
+      <a href="#contact" class="btn-primary">
+        Подобрать квартиру
+        <svg width="16" height="16" fill="none" viewBox="0 0 16 16"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </a>
+      <a href="#calculator" class="btn-ghost">
+        <svg width="16" height="16" fill="none" viewBox="0 0 16 16"><rect x="2" y="2" width="12" height="12" rx="2" stroke="currentColor" stroke-width="1.5"/><path d="M5 8h6M8 5v6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        Рассчитать платёж
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- STATS -->
+<div class="stats-bar">
+  <div class="stats-inner reveal">
+    <div class="stat-item"><div class="stat-num">2<span>%</span></div><div class="stat-label">Льготная ставка<br>по ипотеке</div></div>
+    <div class="stat-item"><div class="stat-num">47<span>+</span></div><div class="stat-label">Готовых и строящихся<br>объектов</div></div>
+    <div class="stat-item"><div class="stat-num">3<span> дня</span></div><div class="stat-label">Одобрение<br>заявки</div></div>
+    <div class="stat-item"><div class="stat-num">1200<span>+</span></div><div class="stat-label">Семей уже<br>купили</div></div>
+  </div>
+</div>
+
+<!-- MORTGAGE -->
+<section class="mortgage-section" id="mortgage">
+  <div class="section-tag">Условия программы</div>
+  <div class="mortgage-grid">
+    <div class="reveal">
+      <h2>Ипотека под<br><span style="color:var(--gold)">2% годовых</span></h2>
+      <p class="section-desc">Государственная программа поддержки жилья в ЛНР. Самая низкая ставка в России — доступная ипотека для всех граждан.</p>
+      <div class="mortgage-features">
+        <div class="feat-row">
+          <div class="feat-icon">💰</div>
+          <div><div class="feat-title">Ставка 2% годовых</div><div class="feat-desc">Государственная льготная ставка на весь срок кредита, без скрытых надбавок и изменений</div></div>
+        </div>
+        <div class="feat-row">
+          <div class="feat-icon">🏠</div>
+          <div><div class="feat-title">Первый взнос от 10%</div><div class="feat-desc">Минимальный первоначальный взнос. Материнский капитал принимается как первый взнос</div></div>
+        </div>
+        <div class="feat-row">
+          <div class="feat-icon">📋</div>
+          <div><div class="feat-title">Срок до 30 лет</div><div class="feat-desc">Комфортный ежемесячный платёж при долгосрочном кредитовании. Без штрафов за досрочное погашение</div></div>
+        </div>
+        <div class="feat-row">
+          <div class="feat-icon">⚡</div>
+          <div><div class="feat-title">Одобрение за 3 дня</div><div class="feat-desc">Минимальный пакет документов — паспорт и справка о доходах. Подача заявки онлайн</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="rate-display reveal" style="transition-delay:.15s">
+      <span class="rate-num">2<span class="rate-pct">%</span></span>
+      <div class="rate-label">годовых — государственная льготная ставка</div>
+      <div style="margin-top:32px;display:flex;flex-direction:column;gap:12px;">
+        <div style="display:flex;justify-content:space-between;padding:14px 20px;background:rgba(255,255,255,.04);border-radius:12px;font-size:14px;"><span style="color:var(--muted)">Сумма кредита</span><span style="font-weight:700;font-family:'Unbounded',sans-serif;font-size:13px;">до 6 000 000 ₽</span></div>
+        <div style="display:flex;justify-content:space-between;padding:14px 20px;background:rgba(255,255,255,.04);border-radius:12px;font-size:14px;"><span style="color:var(--muted)">Срок кредита</span><span style="font-weight:700;font-family:'Unbounded',sans-serif;font-size:13px;">до 30 лет</span></div>
+        <div style="display:flex;justify-content:space-between;padding:14px 20px;background:rgba(255,255,255,.04);border-radius:12px;font-size:14px;"><span style="color:var(--muted)">Первый взнос</span><span style="font-weight:700;font-family:'Unbounded',sans-serif;font-size:13px;">от 10%</span></div>
+        <div style="display:flex;justify-content:space-between;padding:14px 20px;background:rgba(26,255,178,.08);border:1px solid rgba(26,255,178,.2);border-radius:12px;font-size:14px;"><span style="color:var(--accent2)">Только новостройки ЛНР</span><span style="color:var(--accent2)">✓</span></div>
+      </div>
+      <a href="#contact" class="btn-primary" style="width:100%;justify-content:center;margin-top:24px;">
+        Подать заявку
+        <svg width="16" height="16" fill="none" viewBox="0 0 16 16"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- PROPERTIES -->
+<section id="properties" style="background:var(--dark);">
+  <div class="section-tag reveal">Каталог объектов</div>
+  <div style="display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:48px;" class="reveal">
+    <div>
+      <h2>Актуальные<br>новостройки</h2>
+      <p class="section-desc" style="margin-bottom:0;">Только аккредитованные застройщики. Квартиры сданные и строящиеся.</p>
+    </div>
+    <a href="#contact" class="btn-ghost">Все объекты →</a>
+  </div>
+  <div class="props-grid">
+    <div class="prop-card reveal" style="transition-delay:0s">
+      <div class="prop-img">
+        <span class="emoji-bg">🏢</span>
+        <img id="pimg-0" alt="ЖК Центральный">
+        <div class="prop-badge">Сдан</div>
+      </div>
+      <div class="prop-info">
+        <div class="prop-name">ЖК «Центральный»</div>
+        <div class="prop-location">📍 Луганск, Центр</div>
+        <div class="prop-specs">
+          <div class="spec">🛏 <strong>1–3</strong> комн.</div>
+          <div class="spec">📐 <strong>38–95</strong> м²</div>
+          <div class="spec">🏗 <strong>16</strong> эт.</div>
+        </div>
+        <div class="prop-price"><div class="price-val">от 2 200 000 ₽</div><div class="price-mo">≈ 9 800 ₽/мес</div></div>
+      </div>
+    </div>
+    <div class="prop-card reveal" style="transition-delay:.1s">
+      <div class="prop-img">
+        <span class="emoji-bg">🏙</span>
+        <img id="pimg-1" alt="ЖК Солнечный">
+        <div class="prop-badge new">Строится</div>
+      </div>
+      <div class="prop-info">
+        <div class="prop-name">ЖК «Солнечный»</div>
+        <div class="prop-location">📍 Луганск, Жовтневый</div>
+        <div class="prop-specs">
+          <div class="spec">🛏 <strong>2–4</strong> комн.</div>
+          <div class="spec">📐 <strong>52–120</strong> м²</div>
+          <div class="spec">🏗 <strong>12</strong> эт.</div>
+        </div>
+        <div class="prop-price"><div class="price-val">от 1 800 000 ₽</div><div class="price-mo">≈ 8 100 ₽/мес</div></div>
+      </div>
+    </div>
+    <div class="prop-card reveal" style="transition-delay:.2s">
+      <div class="prop-img">
+        <span class="emoji-bg">🌆</span>
+        <img id="pimg-2" alt="ЖК Новый Луганск">
+        <div class="prop-badge">Сдан</div>
+      </div>
+      <div class="prop-info">
+        <div class="prop-name">ЖК «Новый Луганск»</div>
+        <div class="prop-location">📍 Луганск, Каменнобродский</div>
+        <div class="prop-specs">
+          <div class="spec">🛏 <strong>1–2</strong> комн.</div>
+          <div class="spec">📐 <strong>34–75</strong> м²</div>
+          <div class="spec">🏗 <strong>9</strong> эт.</div>
+        </div>
+        <div class="prop-price"><div class="price-val">от 1 500 000 ₽</div><div class="price-mo">≈ 6 700 ₽/мес</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CALCULATOR -->
+<section class="calc-section" id="calculator">
+  <div class="calc-wrapper reveal">
+    <div class="calc-title">Ипотечный калькулятор</div>
+    <div class="range-group">
+      <div class="range-label"><span>Стоимость квартиры</span><span class="range-value" id="priceVal">3 000 000 ₽</span></div>
+      <input type="range" id="price" min="1000000" max="6000000" step="100000" value="3000000" oninput="calcMortgage()">
+    </div>
+    <div class="range-group">
+      <div class="range-label"><span>Первоначальный взнос</span><span class="range-value" id="downVal">30% — 900 000 ₽</span></div>
+      <input type="range" id="down" min="10" max="70" step="5" value="30" oninput="calcMortgage()">
+    </div>
+    <div class="range-group">
+      <div class="range-label"><span>Срок кредита</span><span class="range-value" id="termVal">20 лет</span></div>
+      <input type="range" id="term" min="5" max="30" step="1" value="20" oninput="calcMortgage()">
+    </div>
+    <div class="calc-result">
+      <div class="result-payment" id="monthlyPayment">8 430 ₽</div>
+      <div class="result-label">Ежемесячный платёж при ставке 2% годовых</div>
+      <div class="result-details">
+        <div class="res-detail"><div class="val" id="loanAmt">2 100 000 ₽</div><div class="lbl">Сумма кредита</div></div>
+        <div class="res-detail"><div class="val" id="totalAmt">2 023 200 ₽</div><div class="lbl">Итого с процентами</div></div>
+        <div class="res-detail"><div class="val" id="overAmt">23 200 ₽</div><div class="lbl">Переплата</div></div>
+      </div>
+    </div>
+    <div style="text-align:center;margin-top:32px;">
+      <a href="#contact" class="btn-primary">Подать заявку на эту сумму <svg width="16" height="16" fill="none" viewBox="0 0 16 16"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+    </div>
+  </div>
+</section>
+
+<!-- AI GENERATOR -->
+<section class="ai-section" id="ai-gen">
+  <div class="section-tag reveal">AI-технологии</div>
+  <h2 class="reveal">Визуализируй<br>свою <span style="color:var(--gold)">будущую квартиру</span></h2>
+  <p class="section-desc reveal">Используй искусственный интеллект — опиши интерьер мечты и получи реалистичную визуализацию</p>
+  <div class="ai-generator reveal">
+    <div class="ai-header">
+      <div class="ai-title-block">
+        <h3>AI Визуализатор интерьеров</h3>
+        <p>Генерация через Claude + Unsplash API</p>
+      </div>
+      <div class="ai-badge">
+        <svg width="10" height="10" viewBox="0 0 10 10"><circle cx="5" cy="5" r="5" fill="#1AFFB2"/></svg>
+        AI активен
+      </div>
+    </div>
+    <div class="ai-body">
+      <div class="ai-controls">
+        <div class="control-group">
+          <label>Стиль интерьера</label>
+          <div class="style-grid">
+            <button class="style-btn active" data-style="современный минималистичный" onclick="selectStyle(this)">🏠 Минимализм</button>
+            <button class="style-btn" data-style="скандинавский уютный" onclick="selectStyle(this)">🌿 Скандинав</button>
+            <button class="style-btn" data-style="роскошный классический" onclick="selectStyle(this)">👑 Классика</button>
+            <button class="style-btn" data-style="лофт индустриальный" onclick="selectStyle(this)">🔩 Лофт</button>
+          </div>
+        </div>
+        <div class="control-group">
+          <label>Тип помещения</label>
+          <div class="style-grid">
+            <button class="style-btn active" data-room="гостиная" onclick="selectRoom(this)">🛋 Гостиная</button>
+            <button class="style-btn" data-room="спальня" onclick="selectRoom(this)">🛏 Спальня</button>
+            <button class="style-btn" data-room="кухня" onclick="selectRoom(this)">🍳 Кухня</button>
+            <button class="style-btn" data-room="детская" onclick="selectRoom(this)">🎠 Детская</button>
+          </div>
+        </div>
+        <div class="control-group">
+          <label>Описание</label>
+          <textarea class="prompt-input" id="ai-prompt" placeholder="Например: светлые тона, панорамные окна, паркетный пол..."></textarea>
+        </div>
+        <button class="generate-btn" onclick="generateImage()" id="gen-btn">
+          <svg width="18" height="18" fill="none" viewBox="0 0 18 18"><path d="M9 1l2 6 6 2-6 2-2 6-2-6-6-2 6-2 2-6z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg>
+          Сгенерировать визуализацию
+        </button>
+      </div>
+      <div class="ai-preview" id="ai-preview">
+        <div class="ai-preview-placeholder" id="preview-placeholder">
+          <div class="icon">✨</div>
+          <strong>Ваша визуализация появится здесь</strong>
+          <span style="font-size:12px;color:var(--muted)">Выберите стиль и нажмите «Сгенерировать»</span>
+        </div>
+        <img id="generated-img" alt="Сгенерированный интерьер">
+        <div class="ai-loader" id="ai-loader">
+          <div class="loader-ring"></div>
+          <div class="loader-text" id="loader-text">Создаём визуализацию...</div>
+        </div>
+        <div class="ai-error" id="ai-error"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- AI CHAT -->
+<section class="chat-section" id="chat">
+  <div class="section-tag reveal">AI Консультант</div>
+  <h2 class="reveal">Задай вопрос<br><span style="color:var(--gold)">умному агенту</span></h2>
+  <p class="section-desc reveal">Клод знает всё о новостройках ЛНР и условиях ипотеки. Спрашивай — отвечает мгновенно.</p>
+  <div class="chat-wrapper reveal">
+    <div class="chat-box">
+      <div class="chat-messages" id="chat-messages">
+        <div class="msg bot">👋 Привет! Я консультант по новостройкам ЛНР. Помогу подобрать квартиру и рассчитать ипотеку под 2%. Что вас интересует?</div>
+      </div>
+      <div class="chat-input-row">
+        <input class="chat-input" id="chat-input" type="text" placeholder="Спросите про квартиры, ипотеку, условия..." onkeydown="if(event.key==='Enter')sendChat()">
+        <button class="chat-send" onclick="sendChat()">Отправить →</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section class="contact-section" id="contact">
+  <div class="contact-grid">
+    <div class="reveal">
+      <div class="section-tag">Заявка</div>
+      <h2>Получите<br><span style="color:var(--gold)">бесплатную</span><br>консультацию</h2>
+      <p style="font-size:17px;color:var(--muted);line-height:1.7;margin-top:16px;margin-bottom:32px;">Специалист подберёт квартиру под ваш бюджет и рассчитает точные условия ипотеки. Перезвоним за 15 минут.</p>
+      <div class="contact-info">
+        <div class="info-row">📞 <span>+7 (XXX) XXX-XX-XX</span></div>
+        <div class="info-row">📍 <span>г. Луганск, ул. Советская, 58</span></div>
+        <div class="info-row">🕐 <span>Пн–Пт: 9:00–19:00, Сб: 10:00–16:00</span></div>
+      </div>
+    </div>
+    <div class="contact-card reveal" style="transition-delay:.15s">
+      <div id="form-body">
+        <div class="form-row" style="margin-bottom:16px;">
+          <div class="form-group" style="margin-bottom:0"><label>Имя</label><input id="f-name" type="text" class="form-input" placeholder="Иван"></div>
+          <div class="form-group" style="margin-bottom:0"><label>Телефон</label><input id="f-phone" type="tel" class="form-input" placeholder="+7 (___) ___-__-__"></div>
+        </div>
+        <div class="form-group"><label>Тип квартиры</label>
+          <select id="f-rooms" class="form-input"><option>1-комнатная (студия)</option><option>2-комнатная</option><option>3-комнатная</option><option>4-комнатная и более</option></select>
+        </div>
+        <div class="form-group"><label>Бюджет</label>
+          <select id="f-budget" class="form-input"><option>до 1 500 000 ₽</option><option>1 500 000 — 2 500 000 ₽</option><option>2 500 000 — 4 000 000 ₽</option><option>более 4 000 000 ₽</option></select>
+        </div>
+        <div class="form-group"><label>Удобное время</label>
+          <select id="f-time" class="form-input"><option>9:00 — 12:00</option><option>12:00 — 15:00</option><option>15:00 — 18:00</option><option>18:00 — 20:00</option></select>
+        </div>
+        <button class="submit-btn" id="submit-btn" onclick="submitForm()">Получить консультацию бесплатно →</button>
+        <div class="form-note">Нажимая кнопку, вы соглашаетесь с политикой обработки персональных данных</div>
+      </div>
+      <div class="form-success" id="form-success">
+        <div class="success-icon">🎉</div>
+        <div class="success-title">Заявка принята!</div>
+        <div class="success-desc">Наш специалист свяжется с вами в течение 15 минут в рабочее время. Спасибо за доверие!</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">ЛНРНовострой</div>
+  <div class="footer-copy">© 2024 ЛНР Новострой. Официальный партнёр государственной программы ипотеки 2%</div>
+</footer>
+
+<!-- FLOATING CTA -->
+<button class="float-cta" onclick="document.getElementById('contact').scrollIntoView({behavior:'smooth'})">
+  <svg width="16" height="16" fill="none" viewBox="0 0 16 16"><path d="M13 6c0 4.418-5 8-5 8s-5-3.582-5-8a5 5 0 0110 0z" stroke="currentColor" stroke-width="1.5"/><circle cx="8" cy="6" r="2" stroke="currentColor" stroke-width="1.5"/></svg>
+  Заявка — ипотека 2%
+</button>
+
+<script>
+  // ── STATE ──
+  let selStyle = 'современный минималистичный';
+  let selRoom  = 'гостиная';
+
+  function selectStyle(btn) {
+    document.querySelectorAll('[data-style]').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    selStyle = btn.dataset.style;
+  }
+  function selectRoom(btn) {
+    document.querySelectorAll('[data-room]').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    selRoom = btn.dataset.room;
+  }
+
+  // ── AI IMAGE GENERATION (через наш сервер) ──
+  async function generateImage() {
+    const btn       = document.getElementById('gen-btn');
+    const loader    = document.getElementById('ai-loader');
+    const loaderTxt = document.getElementById('loader-text');
+    const placeholder = document.getElementById('preview-placeholder');
+    const img       = document.getElementById('generated-img');
+    const errEl     = document.getElementById('ai-error');
+    const extra     = document.getElementById('ai-prompt').value;
+
+    btn.disabled = true;
+    loader.classList.add('active');
+    placeholder.style.display = 'none';
+    errEl.classList.remove('show');
+    loaderTxt.textContent = 'Claude создаёт промпт...';
+
+    try {
+      const res = await fetch('/api/ai/visualize', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ style: selStyle, room: selRoom, extra })
+      });
+      const data = await res.json();
+
+      if (!res.ok) throw new Error(data.error || 'Ошибка сервера');
+
+      loaderTxt.textContent = 'Загружаем изображение...';
+      const query = encodeURIComponent(data.unsplashQuery || `${selRoom} interior modern`);
+      const seed  = Date.now();
+      img.src = `https://source.unsplash.com/800x600/?${query}&sig=${seed}`;
+      img.classList.remove('loaded');
+      img.onload  = () => { img.classList.add('loaded'); loader.classList.remove('active'); btn.disabled = false; };
+      img.onerror = () => {
+        img.src = `https://picsum.photos/seed/${seed}/800/600`;
+        img.onload = () => { img.classList.add('loaded'); loader.classList.remove('active'); btn.disabled = false; };
+      };
+    } catch (err) {
+      loader.classList.remove('active');
+      errEl.textContent = err.message;
+      errEl.classList.add('show');
+      btn.disabled = false;
+    }
+  }
+
+  // ── CALCULATOR ──
+  function fm(n) { return n.toLocaleString('ru-RU') + ' ₽'; }
+  function calcMortgage() {
+    const price = +document.getElementById('price').value;
+    const pct   = +document.getElementById('down').value;
+    const yrs   = +document.getElementById('term').value;
+    const down  = Math.round(price * pct / 100);
+    const loan  = price - down;
+    const r     = 0.02 / 12;
+    const m     = yrs * 12;
+    const pay   = loan * (r * Math.pow(1+r, m)) / (Math.pow(1+r, m) - 1);
+    const total = pay * m;
+    document.getElementById('priceVal').textContent     = fm(price);
+    document.getElementById('downVal').textContent      = `${pct}% — ${fm(down)}`;
+    document.getElementById('termVal').textContent      = `${yrs} ${yrs===1?'год':yrs<5?'года':'лет'}`;
+    document.getElementById('monthlyPayment').textContent = fm(Math.round(pay));
+    document.getElementById('loanAmt').textContent      = fm(loan);
+    document.getElementById('totalAmt').textContent     = fm(Math.round(total));
+    document.getElementById('overAmt').textContent      = fm(Math.round(total - loan));
+    document.querySelectorAll('input[type=range]').forEach(r => {
+      const p = (r.value - r.min) / (r.max - r.min) * 100;
+      r.style.background = `linear-gradient(to right,var(--gold) ${p}%,rgba(200,169,110,.2) ${p}%)`;
+    });
+  }
+
+  // ── CHAT (streaming через SSE) ──
+  const chatHistory = [];
+  async function sendChat() {
+    const input = document.getElementById('chat-input');
+    const msgs  = document.getElementById('chat-messages');
+    const text  = input.value.trim();
+    if (!text) return;
+    input.value = '';
+
+    chatHistory.push({ role: 'user', content: text });
+    msgs.innerHTML += `<div class="msg user">${text}</div>`;
+
+    const botDiv = document.createElement('div');
+    botDiv.className = 'msg bot typing';
+    botDiv.textContent = '...';
+    msgs.appendChild(botDiv);
+    msgs.scrollTop = msgs.scrollHeight;
+
+    try {
+      const res = await fetch('/api/ai/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ messages: chatHistory })
+      });
+
+      const reader = res.body.getReader();
+      const dec = new TextDecoder();
+      let full = '';
+      botDiv.textContent = '';
+      botDiv.classList.remove('typing');
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        const lines = dec.decode(value).split('\n');
+        for (const line of lines) {
+          if (!line.startsWith('data:')) continue;
+          const raw = line.slice(5).trim();
+          if (raw === '[DONE]') break;
+          try {
+            const d = JSON.parse(raw);
+            if (d.text) { full += d.text; botDiv.textContent = full; msgs.scrollTop = msgs.scrollHeight; }
+          } catch {}
+        }
+      }
+      chatHistory.push({ role: 'assistant', content: full });
+    } catch {
+      botDiv.textContent = 'Ошибка соединения. Попробуйте ещё раз.';
+    }
+  }
+
+  // ── FORM SUBMIT ──
+  async function submitForm() {
+    const name  = document.getElementById('f-name').value.trim();
+    const phone = document.getElementById('f-phone').value.trim();
+    if (!name || !phone) { alert('Введите имя и телефон'); return; }
+    const btn = document.getElementById('submit-btn');
+    btn.disabled = true;
+    btn.textContent = 'Отправляем...';
+    try {
+      const res = await fetch('/api/form/submit', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name, phone,
+          rooms:  document.getElementById('f-rooms').value,
+          budget: document.getElementById('f-budget').value,
+          time:   document.getElementById('f-time').value
+        })
+      });
+      const data = await res.json();
+      if (data.success) {
+        document.getElementById('form-body').style.display = 'none';
+        document.getElementById('form-success').classList.add('show');
+      } else throw new Error(data.error);
+    } catch (e) {
+      alert(e.message || 'Ошибка отправки');
+      btn.disabled = false;
+      btn.textContent = 'Получить консультацию бесплатно →';
+    }
+  }
+
+  // ── LOAD HERO IMAGE ──
+  function loadHeroImage() {
+    const img = document.getElementById('hero-img');
+    const sk  = document.getElementById('hero-skeleton');
+    const s   = Math.floor(Math.random() * 999);
+    img.src = `https://source.unsplash.com/1200x900/?luxury+apartment+modern+building&sig=${s}`;
+    img.onload = () => { img.classList.add('loaded'); sk.style.opacity = '0'; };
+  }
+
+  // ── LOAD PROP IMAGES ──
+  const propQ = ['modern apartment building exterior','new residential complex architecture','contemporary apartment building urban'];
+  function loadPropImages() {
+    propQ.forEach((q, i) => {
+      const img = document.getElementById(`pimg-${i}`);
+      if (!img) return;
+      const s = Math.floor(Math.random() * 999) + i * 111;
+      img.src = `https://source.unsplash.com/600x400/?${encodeURIComponent(q)}&sig=${s}`;
+      img.onload = () => img.classList.add('loaded');
+    });
+  }
+
+  // ── SCROLL REVEAL ──
+  const obs = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); }), { threshold: 0.1 });
+  document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+
+  // ── INIT ──
+  calcMortgage();
+  loadHeroImage();
+  loadPropImages();
+</script>
+</body>
+</html>
